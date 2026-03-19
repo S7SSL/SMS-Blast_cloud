@@ -1,0 +1,11 @@
+{
+  "name": "sms-blast-server",
+  "version": "1.0.0",
+  "main": "sms_server.js",
+  "scripts": {
+    "start": "node sms_server.js"
+  },
+  "engines": {
+    "node": "18"
+  }
+}
