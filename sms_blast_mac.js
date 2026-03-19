@@ -22,7 +22,7 @@ function loadLeads() {
   return data.filter(l =>
     String(l.hasWebsite || '').toUpperCase() === 'NO' &&
     l.mobile &&
-    l.status === 'new'
+    (l.status === 'new' || (l.status === 'new' && l.retries && l.retries < 3))
   );
 }
 
@@ -30,6 +30,18 @@ function markSent(lead) {
   let data = JSON.parse(fs.readFileSync(CRM_PATH, 'utf8'));
   let arr = Array.isArray(data) ? data : (data.leads || data.companies || []);
   arr = arr.map(l => l.mobile === lead.mobile ? { ...l, status: 'texted', textedAt: new Date().toISOString() } : l);
+  const out = Array.isArray(data) ? arr : { ...data, leads: arr };
+  fs.writeFileSync(CRM_PATH, JSON.stringify(out, null, 2));
+}
+
+function markFailed(lead, reason) {
+  let data = JSON.parse(fs.readFileSync(CRM_PATH, 'utf8'));
+  let arr = Array.isArray(data) ? data : (data.leads || data.companies || []);
+  const existing = arr.find(l => l.mobile === lead.mobile);
+  const retries = (existing && existing.retries) ? existing.retries + 1 : 1;
+  arr = arr.map(l => l.mobile === lead.mobile
+    ? { ...l, status: retries >= 3 ? 'failed' : 'new', retries, failReason: reason, lastAttempt: new Date().toISOString() }
+    : l);
   const out = Array.isArray(data) ? arr : { ...data, leads: arr };
   fs.writeFileSync(CRM_PATH, JSON.stringify(out, null, 2));
 }
@@ -80,6 +92,7 @@ async function blast() {
       console.log(`[${i+1}/${leads.length}] ${line}`);
       log.write(line + '\n');
     } catch (e) {
+      markFailed(lead, e.message);
       const line = `[${ts}] ❌ FAILED — ${lead.name} (${lead.mobile}): ${e.message}`;
       console.log(`[${i+1}/${leads.length}] ${line}`);
       log.write(line + '\n');
