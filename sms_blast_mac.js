@@ -11,11 +11,21 @@ const DRY_RUN = process.argv.includes('--dry-run');
 const CRM_PATH = path.join(__dirname, 'crm.json');
 const LOG_PATH = path.join(__dirname, 'sms_log.txt');
 const DELAY_MS = 20000;
+const ONEDRIVE_CRM = path.join(
+  process.env.HOME,
+  'Library/CloudStorage/OneDrive-Personal/Marge-Backup/crm.json'
+);
 
 function loadLeads() {
   if (!fs.existsSync(CRM_PATH)) {
-    console.error('❌ crm.json not found — run scraper first or copy from Mini');
-    process.exit(1);
+    if (fs.existsSync(ONEDRIVE_CRM)) {
+      console.log('📂 crm.json not found locally — pulling from OneDrive...');
+      fs.copyFileSync(ONEDRIVE_CRM, CRM_PATH);
+      console.log('✅ Copied from OneDrive');
+    } else {
+      console.error('❌ crm.json not found locally or in OneDrive — run scraper on Mini first');
+      process.exit(1);
+    }
   }
   let data = JSON.parse(fs.readFileSync(CRM_PATH, 'utf8'));
   if (!Array.isArray(data)) data = data.leads || data.companies || [];
