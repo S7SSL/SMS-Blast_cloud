@@ -18,7 +18,7 @@ const REPLY_MSG = `Great! Here's an example site we built for a client earlier t
 
 That's the kind of thing we'd build for you — free, AI-ready, 48hrs.
 
-Drop me your email and we'll get started. Or book a quick 10-min call: calendly.com/sat-installsmart/30min`;
+Drop me your email and we'll get started. Or book a quick 15-min call: calendly.com/sat-installsmart/15-minute-meeting-new-website`;
 
 function log(msg) {
   const line = `[${new Date().toISOString()}] ${msg}`;
