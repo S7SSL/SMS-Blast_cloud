@@ -122,6 +122,14 @@ async function blast() {
 
   console.log('\nBlast complete! See sms_log.txt for results.');
   log.end();
+
+  // Sync updated CRM back to OneDrive so Mini stays in sync
+  try {
+    fs.copyFileSync(CRM_PATH, ONEDRIVE_CRM);
+    console.log('✅ CRM synced back to OneDrive');
+  } catch (e) {
+    console.log('⚠️  CRM sync to OneDrive failed:', e.message);
+  }
 }
 
 blast();
