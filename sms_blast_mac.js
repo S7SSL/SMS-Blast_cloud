@@ -61,13 +61,19 @@ function buildMessage(name) {
 }
 
 function sendSMS(phone, message) {
-  const safeMsg = message.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'");
+  const tmpScript = `/tmp/sms_send_${Date.now()}.applescript`;
+  const escaped = message.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
   const script = `tell application "Messages"
     set targetService to 1st service whose service type = SMS
     set targetBuddy to buddy "${phone}" of targetService
-    send "${safeMsg}" to targetBuddy
+    send "${escaped}" to targetBuddy
   end tell`;
-  execSync(`osascript << 'APPLESCRIPT'\n${script}\nAPPLESCRIPT`);
+  fs.writeFileSync(tmpScript, script);
+  try {
+    execSync(`osascript "${tmpScript}"`);
+  } finally {
+    fs.unlinkSync(tmpScript);
+  }
 }
 
 function sleep(ms) {
