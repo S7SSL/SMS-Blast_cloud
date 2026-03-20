@@ -14,12 +14,11 @@ const MESSAGES_DB = path.join(process.env.HOME, 'Library/Messages/chat.db');
 const POLL_MS = 60000;
 const ONEDRIVE_CRM = path.join(process.env.HOME, 'Library/CloudStorage/OneDrive-Personal/Marge-Backup/crm.json');
 
-const REPLY_MSG = `Thanks for getting back to me! Two quick things:
+const REPLY_MSG = `Great! Here's an example site we built for a client earlier this week: s7ssl.github.io/sparkle-clean-london
 
-1. What's your email? I'll send you a preview of what we'd build for you.
-2. If you'd like a quick call: calendly.com/sat-installsmart/30min
+That's the kind of thing we'd build for you — free, AI-ready, 48hrs.
 
-No obligation — just a 15-min chat.`;
+Drop me your email and we'll get started. Or book a quick call: calendly.com/sat-installsmart/30min`;
 
 function log(msg) {
   const line = `[${new Date().toISOString()}] ${msg}`;
