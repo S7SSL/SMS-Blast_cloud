@@ -55,9 +55,10 @@ function markFailed(lead, reason) {
   fs.writeFileSync(CRM_PATH, JSON.stringify(out, null, 2));
 }
 
-function buildMessage(name, campaign) {
+function buildMessage(name, campaign, auditMsg) {
+  if (auditMsg) return auditMsg;
   if (campaign === 'ai-upgrade') {
-    return `Hi, I help businesses like ${name} get more leads from their website using AI. Takes 48hrs to implement, results in 30 days. Interested? Reply YES`;
+    return `Hi, I ran a quick check on ${name}'s online presence and noticed a few things that could be getting you more enquiries. Want me to send over what I found?`;
   }
   return `Hi, I noticed ${name} doesn't have a website. We'll build one FREE + make it AI-ready for 24/7 bookings. Takes 48hrs. Interested? Reply YES`;
 }
@@ -94,7 +95,7 @@ async function blast() {
 
   for (let i = 0; i < leads.length; i++) {
     const lead = leads[i];
-    const msg = buildMessage(lead.name, lead.campaign);
+    const msg = buildMessage(lead.name, lead.campaign, lead.auditMsg);
     const ts = new Date().toISOString();
 
     if (DRY_RUN) {
