@@ -14,6 +14,18 @@ const MESSAGES_DB = path.join(process.env.HOME, 'Library/Messages/chat.db');
 const POLL_MS = 60000;
 const ONEDRIVE_CRM = path.join(process.env.HOME, 'Library/CloudStorage/OneDrive-Personal/Marge-Backup/crm.json');
 
+const TELEGRAM_TOKEN = '8762305817:AAGnS96Fr1VkyKiomrRtrOKUdmYg4UA-Hnk';
+const TELEGRAM_CHAT_ID = '612589060';
+
+function notifyTelegram(name, phone, replyText) {
+  const msg = `🔥 YES reply!\n\n*${name}*\n📞 ${phone}\n💬 "${replyText}"\n\nCall them now while they're warm!`;
+  const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+  const payload = JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: msg, parse_mode: 'Markdown' });
+  const req = require('https').request(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(payload) } });
+  req.write(payload);
+  req.end();
+}
+
 const REPLY_MSG = `Great! Here's an example site we built for a client earlier this week: s7ssl.github.io/sparkle-clean-london
 
 That's the kind of thing we'd build for you — free, AI-ready, 48hrs.
@@ -146,8 +158,12 @@ async function poll() {
         if (idx !== -1) {
           crm[idx].status = 'replied';
           crm[idx].repliedAt = new Date().toISOString();
+          crm[idx].replyText = msg.text;
           updated = true;
         }
+
+        // Telegram alert to Sat
+        notifyTelegram(lead.name, lead.mobile, msg.text);
       } else {
         log(`❌ Failed to send auto-reply to ${lead.name}`);
       }
