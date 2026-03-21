@@ -30,9 +30,8 @@ function loadLeads() {
   let data = JSON.parse(fs.readFileSync(CRM_PATH, 'utf8'));
   if (!Array.isArray(data)) data = data.leads || data.companies || [];
   return data.filter(l =>
-    String(l.hasWebsite || '').toUpperCase() === 'NO' &&
     l.mobile &&
-    (l.status === 'new' || (l.status === 'new' && l.retries && l.retries < 3))
+    l.status === 'new'
   );
 }
 
@@ -56,7 +55,10 @@ function markFailed(lead, reason) {
   fs.writeFileSync(CRM_PATH, JSON.stringify(out, null, 2));
 }
 
-function buildMessage(name) {
+function buildMessage(name, campaign) {
+  if (campaign === 'ai-upgrade') {
+    return `Hi, I help businesses like ${name} get more leads from their website using AI. Takes 48hrs to implement, results in 30 days. Interested? Reply YES`;
+  }
   return `Hi, I noticed ${name} doesn't have a website. We'll build one FREE + make it AI-ready for 24/7 bookings. Takes 48hrs. Interested? Reply YES`;
 }
 
@@ -92,7 +94,7 @@ async function blast() {
 
   for (let i = 0; i < leads.length; i++) {
     const lead = leads[i];
-    const msg = buildMessage(lead.name);
+    const msg = buildMessage(lead.name, lead.campaign);
     const ts = new Date().toISOString();
 
     if (DRY_RUN) {
