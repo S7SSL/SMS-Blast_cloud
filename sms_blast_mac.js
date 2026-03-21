@@ -60,7 +60,7 @@ function buildMessage(name, campaign, auditMsg) {
   if (campaign === 'ai-upgrade') {
     return `Hi, I ran a quick check on ${name}'s online presence and noticed a few things that could be getting you more enquiries. Want me to send over what I found?`;
   }
-  return `Hi, I noticed ${name} doesn't have a website. We'll build one FREE + make it AI-ready for 24/7 bookings. Takes 48hrs. Interested? Reply YES`;
+  return `Hi, I noticed ${name} doesn't have a website. We built this for a client yesterday: s7ssl.github.io/sparkle-clean-london — we can do the same for you, free, in 48hrs. Interested? Reply YES`;
 }
 
 function sendSMS(phone, message) {
