@@ -55,12 +55,13 @@ function markFailed(lead, reason) {
   fs.writeFileSync(CRM_PATH, JSON.stringify(out, null, 2));
 }
 
-function buildMessage(name, campaign, auditMsg) {
+function buildMessage(name, campaign, auditMsg, area) {
+  const local = area ? ` in ${area}` : '';
   if (auditMsg) return auditMsg;
   if (campaign === 'ai-upgrade') {
-    return `Hi, I ran a quick check on ${name}'s online presence and noticed a few things that could be getting you more enquiries. Want me to send over what I found?`;
+    return `Hi, it's Sat — I help tradespeople${local} get more enquiries online. Had a quick look at ${name}'s website and spotted a few things holding it back. Worth a chat?`;
   }
-  return `Hi, I noticed ${name} doesn't have a website. We built this for a client yesterday: s7ssl.github.io/sparkle-clean-london — we can do the same for you, free, in 48hrs. Interested? Reply YES`;
+  return `Hi, it's Sat — I help tradespeople${local} get more enquiries online. Built this for a local business this week: s7ssl.github.io/sparkle-clean-london — happy to do the same for ${name}, free. Worth a chat?`;
 }
 
 function sendSMS(phone, message) {
@@ -95,7 +96,7 @@ async function blast() {
 
   for (let i = 0; i < leads.length; i++) {
     const lead = leads[i];
-    const msg = buildMessage(lead.name, lead.campaign, lead.auditMsg);
+    const msg = buildMessage(lead.name, lead.campaign, lead.auditMsg, lead.area);
     const ts = new Date().toISOString();
 
     if (DRY_RUN) {
